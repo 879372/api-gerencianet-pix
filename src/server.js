@@ -26,13 +26,13 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
 
   let data = JSON.stringify({
     "grant_type": "client_credentials"
   });
   
-  let configure = {
+    const configure = await {
     method: 'post',
     maxBodyLength: Infinity,
     url: 'https://api-pix-h.gerencianet.com.br/oauth/token',
@@ -48,14 +48,14 @@ app.get('/', (req, res) => {
     const acessToken = response.data.access_token;
     console.log(acessToken)
   
-    /*const reqGN = axios.create({
+    const reqGN = axios.create({
       baseUrl: process.env.GN_ENDPOINT,
       httpsAgent: agent,
       headers:{
         Authorization: `Bearer  ${acessToken}`,
         'Content-Type': 'application/json'
       }
-    })*/
+    })
   
     const endpoint = 'https://api-pix-h.gerencianet.com.br/v2/cob'
   
@@ -82,10 +82,19 @@ app.get('/', (req, res) => {
          }
        };
   
-       axios.post(endpoint, dataCob, config).then((response) => {
-         res.send((response.data));
+        const cobResponse = axios.post(endpoint ,dataCob, config).then((response) => {
+          res.send((response.data));
+
+  
+        //const qrcodeResponse = axios.get(endpoint,`/v2/loc/${response.data.loc.id}/qrcode`).then((response) =>
+        //res.send(qrcodeResponse);
+        //)
+        
+        
+
+
   })
-  });
+});
  
 })
 
